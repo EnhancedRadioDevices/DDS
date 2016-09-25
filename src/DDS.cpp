@@ -41,7 +41,7 @@ void DDS::start() {
   // This lets us use decoding functions that run at the same reference
   // clock as the DDS.
   // We use ICR1 as TOP and prescale by 8
-  TCCR1B = _BV(CS10) | _BV(WGM13) | _BV(WGM12);
+/*  TCCR1B = _BV(CS10) | _BV(WGM13) | _BV(WGM12);
   TCCR1A = 0;
   ICR1 = ((F_CPU / 1) / refclk) - 1;
 #ifdef DDS_DEBUG_SERIAL
@@ -60,6 +60,7 @@ void DDS::start() {
   DIDR0 |= _BV(0);
   ADCSRB = _BV(ADTS2) | _BV(ADTS1) | _BV(ADTS0);
   ADCSRA = _BV(ADEN) | _BV(ADSC) | _BV(ADATE) | _BV(ADIE) | _BV(ADPS2); // | _BV(ADPS0);    
+*/
 }
 
 void DDS::stop() {
