@@ -13,6 +13,7 @@ void DDS::start() {
 #ifdef DDS_PWM_PIN_3
   TCCR2A = (TCCR2A | _BV(COM2B1)) & ~(_BV(COM2B0) | _BV(COM2A1) | _BV(COM2A0)) |
          _BV(WGM21) | _BV(WGM20);
+  //TCCR2B = (TCCR2B & ~(_BV(CS22) | _BV(CS21))) | _BV(CS20) | _BV(WGM22);
   TCCR2B = (TCCR2B & ~(_BV(CS22) | _BV(CS21))) | _BV(CS20) | _BV(WGM22);
 #else
   // Alternatively, use pin 11
@@ -33,42 +34,49 @@ void DDS::start() {
   OCR2A = 0;
 #endif
   
-#ifdef DDS_USE_ONLY_TIMER2
-  TIMSK2 |= _BV(TOIE2);
-#endif
+
+}
+
+void DDS::stop() {
+  // TODO: Stop the timers.
+  if(!timer2only){
+    TCCR1B = 0;
+  }
+  TCCR2B = 0;
+}
+
+void DDS::startPhaseAccumulator(bool use_only_timer_2 = false){
+    timer2only = use_only_timer_2;
+
+  if(timer2only){
+    TIMSK2 |= _BV(TOIE2);
+  }
 
   // Second, setup Timer1 to trigger the ADC interrupt
   // This lets us use decoding functions that run at the same reference
   // clock as the DDS.
   // We use ICR1 as TOP and prescale by 8
-/*  TCCR1B = _BV(CS10) | _BV(WGM13) | _BV(WGM12);
-  TCCR1A = 0;
-  ICR1 = ((F_CPU / 1) / refclk) - 1;
-#ifdef DDS_DEBUG_SERIAL
-  Serial.print(F("DDS SysClk: "));
-  Serial.println(F_CPU/8);
-  Serial.print(F("DDS RefClk: "));
-  Serial.println(refclk, DEC);
-  Serial.print(F("DDS ICR1: "));
-  Serial.println(ICR1, DEC);
-#endif
+  if(!timer2only){
+    TCCR1B = _BV(CS10) | _BV(WGM13) | _BV(WGM12);
+    TCCR1A = 0;
+    ICR1 = ((F_CPU / 1) / refclk) - 1;
+    #ifdef DDS_DEBUG_SERIAL
+      Serial.print(F("DDS SysClk: "));
+      Serial.println(F_CPU/8);
+      Serial.print(F("DDS RefClk: "));
+      Serial.println(refclk, DEC);
+      Serial.print(F("DDS ICR1: "));
+      Serial.println(ICR1, DEC);
+    #endif
 
   // Configure the ADC here to automatically run and be triggered off Timer1
-  ADMUX = _BV(REFS0) | _BV(ADLAR) | 0; // Channel 0, shift result left (ADCH used)
-  DDRC &= ~_BV(0);
-  PORTC &= ~_BV(0);
-  DIDR0 |= _BV(0);
-  ADCSRB = _BV(ADTS2) | _BV(ADTS1) | _BV(ADTS0);
-  ADCSRA = _BV(ADEN) | _BV(ADSC) | _BV(ADATE) | _BV(ADIE) | _BV(ADPS2); // | _BV(ADPS0);    
-*/
-}
-
-void DDS::stop() {
-  // TODO: Stop the timers.
-#ifndef DDS_USE_ONLY_TIMER2
-  TCCR1B = 0;
-#endif
-  TCCR2B = 0;
+    ADMUX = _BV(REFS0) | _BV(ADLAR) | 0; // Channel 0, shift result left (ADCH used)
+    DDRC &= ~_BV(0);
+    PORTC &= ~_BV(0);
+    DIDR0 |= _BV(0);
+    ADCSRB = _BV(ADTS2) | _BV(ADTS1) | _BV(ADTS0);
+    ADCSRA = _BV(ADEN) | _BV(ADSC) | _BV(ADATE) | _BV(ADIE) | _BV(ADPS2); // | _BV(ADPS0);    
+  }
 }
 
 // Set our current sine wave frequency in Hz
@@ -88,6 +96,8 @@ ddsAccumulator_t DDS::calcFrequency(unsigned short freq) {
       newStep = (1500.0 / (DDS_REFCLK_DEFAULT+DDS_REFCLK_OFFSET)) * pow(2,ACCUMULATOR_BITS);      
     } else if (freq == 600) {
       newStep = (600.0 / (DDS_REFCLK_DEFAULT+DDS_REFCLK_OFFSET)) * pow(2,ACCUMULATOR_BITS);      
+    } else {
+      newStep = pow(2,ACCUMULATOR_BITS)*freq / (refclk+refclkOffset);
     }
   } else {
     newStep = pow(2,ACCUMULATOR_BITS)*freq / (refclk+refclkOffset);

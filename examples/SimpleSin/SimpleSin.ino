@@ -16,6 +16,7 @@ void setup() {
   digitalWrite(PWM_PIN, LOW);
   
   dds.start();
+  dds.startPhaseAccumulator(false);
   dds.playWait(600, 3000);
   dds.on();
   //dds.setAmplitude(31);

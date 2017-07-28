@@ -10,7 +10,7 @@
 
 // Normally, we turn on timer2 and timer1, and have ADC sampling as our clock
 // Define this to only use Timer2, and not start the ADC clock
-// #define DDS_USE_ONLY_TIMER2
+//#define DDS_USE_ONLY_TIMER2
 
 // Use a short (16 bit) accumulator. Phase accuracy is reduced, but speed
 // is increased, along with a reduction in memory use.
@@ -133,7 +133,7 @@ class DDS {
 public:
   DDS(): refclk(DDS_REFCLK_DEFAULT), refclkOffset(DDS_REFCLK_OFFSET),
     accumulator(0), running(false),
-    timeLimited(false), tickDuration(0), amplitude(255)
+    timeLimited(false), tickDuration(0), amplitude(255), timer2only(false)
     {};
 
   // Start all of the timers needed
@@ -142,6 +142,9 @@ public:
   const bool isRunning() { return running; };
   // Stop the DDS timers
   void stop();
+  // Start the phase accumulator
+  void startPhaseAccumulator(bool use_only_timer_2 = false);
+  bool isTimer2Only() { return timer2only; };
   
   // Start and stop the PWM output
   void on() {
@@ -214,6 +217,7 @@ public:
   void clockTick();
   
 private:
+  volatile bool timer2only;
   volatile bool running;
   volatile unsigned long tickDuration;
   volatile bool timeLimited;
