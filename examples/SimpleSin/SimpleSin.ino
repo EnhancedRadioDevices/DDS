@@ -9,6 +9,7 @@
 
 #define PWM_PIN 3
 
+#define DDS_USE_ONLY_TIMER2 false
 #define TIMER2_PHASE_ADVANCE 24
 
 DDS dds;
@@ -18,7 +19,7 @@ void setup() {
   digitalWrite(PWM_PIN, LOW);
   
   dds.start();
-  dds.startPhaseAccumulator(false);
+  dds.startPhaseAccumulator(DDS_USE_ONLY_TIMER2);
   dds.playWait(600, 3000);
   dds.on();
   //dds.setAmplitude(31);
@@ -29,16 +30,15 @@ void loop() {
 }
 
 
-//Uncomment if using dds.startPhaseAccumulator(true);
-/*ISR(TIMER2_OVF_vect) {
+#if DDS_USE_ONLY_TIMER2
+ISR(TIMER2_OVF_vect) {
   static unsigned char tcnt = 0;
   if(++tcnt == TIMER2_PHASE_ADVANCE) {
     tcnt = 0;
     dds.clockTick();
   }
-}*/
-
-//Comment if using dds.startPhaseAccumulator(true);
+}
+#else // Use the ADC timer instead
 ISR(ADC_vect) {
   if(false){
     static unsigned char tcnt = 0;
@@ -49,3 +49,4 @@ ISR(ADC_vect) {
     dds.clockTick();
   }
 }
+#endif
