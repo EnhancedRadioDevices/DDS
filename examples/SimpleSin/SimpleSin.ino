@@ -9,7 +9,7 @@
 
 #define PWM_PIN 3
 
-#define DDS_USE_ONLY_TIMER2 false
+#define DDS_USE_ONLY_TIMER2 true
 #define TIMER2_PHASE_ADVANCE 24
 
 DDS dds;
@@ -40,13 +40,11 @@ ISR(TIMER2_OVF_vect) {
 }
 #else // Use the ADC timer instead
 ISR(ADC_vect) {
-  if(false){
-    static unsigned char tcnt = 0;
-    TIFR1 = _BV(ICF1); // Clear the timer flag
-    if(++tcnt == 4) {
-      tcnt = 0;
-    }
-    dds.clockTick();
+  static unsigned char tcnt = 0;
+  TIFR1 = _BV(ICF1); // Clear the timer flag
+  if(++tcnt == 4) {
+    tcnt = 0;
   }
+  dds.clockTick();
 }
 #endif
