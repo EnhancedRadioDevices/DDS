@@ -1,6 +1,7 @@
 #ifndef _DDS_H_
 #define _DDS_H_
 
+#include <Arduino.h>
 #include <avr/pgmspace.h>
 
 // Use pin 3 for PWM? If not defined, use pin 11
