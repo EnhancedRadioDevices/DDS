@@ -45,7 +45,7 @@ void DDS::stop() {
   TCCR2B = 0;
 }
 
-void DDS::startPhaseAccumulator(bool use_only_timer_2 = false){
+void DDS::startPhaseAccumulator(bool use_only_timer_2){
     timer2only = use_only_timer_2;
 
   if(timer2only){
