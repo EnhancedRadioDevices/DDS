@@ -11,19 +11,31 @@ DDS	KEYWORD1
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
-#begin	KEYWORD2
-#exists	KEYWORD2
-#mkdir	KEYWORD2
-#remove	KEYWORD2
-#rmdir	KEYWORD2
-#open	KEYWORD2
-#close	KEYWORD2
-#seek	KEYWORD2
-#position	KEYWORD2
-#size	KEYWORD2	
+
+start	KEYWORD2
+isRunning	KEYWORD2
+stop	KEYWORD2
+startPhaseAccumulator	KEYWORD2
+isTimer2Only	KEYWORD2
+on	KEYWORD2
+off	KEYWORD2
+play	KEYWORD2
+playWait	KEYWORD2
+calcFrequency	KEYWORD2
+getPhaseAdvance	KEYWORD2
+setFrequency	KEYWORD2
+setPrecalcFrequency	KEYWORD2
+setPhaseDeg	KEYWORD2
+setAmplitude	KEYWORD2
+changePhaseDeg	KEYWORD2
+setReferenceClock	KEYWORD2
+getReferenceClock	KEYWORD2
+setReferenceOffset	KEYWORD2
+getReferenceOffset	KEYWORD2
+getDutyCycle	KEYWORD2
+clockTick	KEYWORD2	
 
 #######################################
 # Constants (LITERAL1)
 #######################################
-#FILE_READ	LITERAL1
-#FILE_WRITE	LITERAL1
+
